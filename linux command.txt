@@ -1,0 +1,327 @@
+grep [-acinv] '搜尋字串' filename
+
+grep "test" 1.txt
+
+-n ：順便輸出行號
+grep -n "test" 1.txt
+
+-v ：反向選擇，亦即顯示出沒有 '搜尋字串' 內容的那一行！
+grep -v "test" 1.txt
+
+行首與行尾字元 ^ $：
+grep '^test' 1.txt
+grep 'test$' 1.txt
+-------------------------------------------
+取代字串
+sed -e 's/old/new/g' clean_iptable_rule.sh
+sed -i 's/old/new/g' clean_iptable_rule.sh
+exmaple, ssh server allow root login
+--> sed -e 's/PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+
+整行換代(第2行)
+sed -i '2c i am alf' 1.txt
+1-3 行都換成"i am alf"
+sed -e '1,3c/i am alf' 1.txt
+
+刪除整行(1-2行刪除)
+sed -e '1,2d' 1.txt
+
+刪除有指定字串的行(在txt中刪除alf)
+
+sed -e '/alf/d' 1.txt
+
+刪除含有字母xx的行
+sed -e '/xx/d' 1.txt
+
+在字元的前面插入一行words
+sed -e '/test/i\hello'  1.txt
+
+在字元的後面插入一行words
+sed -e '/alf/a\**hello'  1.txt
+
+將1-9數字改成"#"  字號
+sed -e 's/[1-9]/#/g' 1.txt
+
+從this這行開始到最後 將1-9數字改成 "?"字號
+sed -e '/this/,$ s/[1-9]/?/g' 1.txt
+
+
+多???
+sed -e '3,$d' -e 's/alf/askey/' 1.txt
+
+
+^	匹配一行的起始
+$	匹配一行的?尾
+.	匹配任何的??字符
+*	匹配零?或多?以前出?的字符
+[chars]	?了匹配任何字符串的字符。您可以使用`-`字符?表示字符的范?
+
+ifconfig eth3 | grep 'inet addr' | sed 's/^.*addr://g' | sed 's/Bcast.*$//g'
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+awk 是一種可以處理資料、產生格式化報表的語言，功能相當強大
+awk、sed、grep更适合的方向：
+
+ grep 更适合??的查找或匹配文本
+ sed 更适合??匹配到的文本
+ awk 更适合格式化文本，?文本?行?复?格式?理
+ 
+ ps: awk 則比較傾向於一行當中分成數個『欄位』來處理
+#########################################
+awk , awk 的資料輸入除了來自管線〝|〞外也可來自檔案,
+
+NF	每一行 ($0) 擁有的欄位總數
+NR	目前 awk 所處理的是『第幾行』資料
+FS	目前的分隔字元，預設是空白鍵
+ 
+awk '{print "Welcome to awk command tutorial "}'
+印出passwd 第一個欄位所有值 以:來作分隔
+awk -F: '{print $1}' /etc/passwd
+
+ls -l | awk '{print "File",$8,"size =",$5/1024,"KB"}'
+
+-------
+/proc/net/arp
+grep 10.0.0.133 /proc/net/arp | awk '{print $4}'
+arp -a | grep 10.0.0.133 | awk '{print $4}'
+
+awk with printf :
+
+awk 'BEGIN {printf ("%.3f \n",4.888)}'
+-----------------------------------------------------
+change NIC for ubuntu, 
+1) modify grub of default 
+   root@linuxhelp1:~# vim /etc/default/grub
+   ##Add the following lines to it.
+   GRUB_CMDLINE_LINUX=" net.ifnames=0 biosdevname=0" 
+2) ##Next regenerate grub configuration file.
+   grub-mkconfig -o /boot/grub/grub.cfg
+----------------------------------------------------
+Add an Existing User Account to a Group
+
+usermod -a -G SIT admin
+
+
+----------------------------------------------------
+tcpdump -i eth3  -vv
+tcpdump -i eth3  -vv -nn
+tcpdump -i eth3  -vv -c 100
+tcpdump -i eth3 -nn -X 'port 22'
+
+tcpdump -i eth3 'tcp'
+tcpdump -i eth3 'host 192.168.1.111'
+tcpdump -i eth3 'tcp and host 192.168.1.111'
+tcpdump -i eth3 'tcp port 22 and host 192.168.1.111'
+tcpdump -i eth3 'tcp and (not port 22) and (net 192.168.0.0/24)'
+
+-----------------------------------------------------
+q: How Do I Remove Packages Without Configuration:
+a: apt-get remove sshd
+q: How Do I Completely Remove Packages
+a: apt-get purge sshd
+>>>>>>>>>>>>>>>>>
+YUM指令對照：yum erase 套件名稱
+# apt-get --purge remove imagemagick
+>>>>>>>>>>>>>>>>>
+q: How I Can Clean Up Disk Space
+a: apt-get clean
+1: How Do I Check Broken Dependencies?
+a: apt-get check
+
+
+How Do I Download Only Source Code of Package:
+ans: apt-get --download-only source vsftp
+How Can I Download and Unpack a Package:
+ans: apt-get source vsftpd
+How Can I Download, Unpack and Compile a Package
+ans: apt-get --compile source sshd
+How Do I Download a Package Without Installing
+ans : apt-get download sshd
+
+------------------------------------
+q: no infconfig
+a: apt-get install net-tools
+
+
+----------------------------------------------------
+get array 長度  --> ${#my_array[*]}"
+
+echo ${host[$i]}
+ 
+read "keyin password" -s password ; echo -e $password
+read "keyin password" -n 8 password ; echo -e $password
+ -p ?入提示文字
+ -n ?入字符?度限制(?到6位，自??束)
+ -t ?入限?
+ -s ?藏?入?容
+
+expr 
+-----------------------------------------------------
+case practice 
+read -p "number:" aNum
+case $aNum in
+    1) echo "you choose 1" ;;
+    2) echo "you choose 2" ;;
+    3) echo "you choose 3" ;;
+    *) echo "number our range" ;;
+esac
+for practice
+for((i=1;i<=5;i++));do
+    echo "$i 次?用";
+done;
+
+----------------------------------------------------
+icmp head: 8 bytes
+ping則是用ICMP的"Echo request"（類別程式碼：8）和"Echo reply"（類別程式碼：0）訊息來實現的
+linux:
+ping -I eth0 8.8.8.8
+ping 8.8.8.8 -f
+ping 8.8.8.8 -c 1
+ping 8.8.8.8 -i 秒數
+----------------------------------------------------
+
+
+
+
+-----------------------------------------------------
+curl
+FTP:
+1) Get a directory listing of an FTP site:
+   curl -u alf:admin ftp://192.168.1.124
+2) ftp upload via curl:
+   curl -u alf:admin -T posts ftp://192.168.1.124/test/
+3) ftp download via curl:
+   curl -u alf:admin -o posts_d ftp://192.168.1.124/test/posts
+
+
+samba(Server Messages Block) , port=445, 139 (smbd) , port=137,138(nmbd)
+pdbedit -L 
+pdbedit -a
+pdbedit -x
+
+自我為用戶端的檢驗 
+smbclient -L //192.168.1.35 -U dog
+掛載smb client 目錄 
+mount -t cifs //192.168.1.35/dog /mnt/samba -o username="dog",password="admin"
+
+smbclient //192.168.1.35/dog -U dog
+1) curl -u dog:admin smb://192.168.1.35/dog/posts
+
+
+NFS（网?文件系?）
+
+------------------------
+rasperbrry pi install linux 
+1) download image form website (https://www.raspberrypi.org/downloads/)
+2) Load image via Win32DiskImager
+3) 
+
+
+
+------------------------------
+Firewall
+
+   
+
+   
+  
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------
+Ubuntu Linux commend line
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+change inter face to eth0
+
+vim /etc/defult/grub
+----------------
+insert the blow line then save it
+GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"
+----------------
+grub-mkconfig -o /boot/grub/grub.cfg
+vi /etc/network/interfaces
+----------------
+modify old name to "eth0" , then save it
+----------------
+reboot
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+other
+DHCP/Static 
+vi /etc/network/interface
+auto eth0
+iface eth0 inet dhcp
+auto eth1 
+iface eth1 inet static
+address 10.0.0.254
+netmask 255.255.255.0
+gateway 10.0.0.1
+
+--------------------------
+install dhcp server
+DHCP (Dynamic Host Control Protocol)
+
+The following command is used to check the syntax of dhcpd.conf file for errors
+
+#dhcpd -t
+
+service isc-dhcp-server restart
+
+/etc/default/isc-dhcp-server
+INTERFACESv4="eth0"
+
+option domain-name-servers 8.8.8.8, 8.8.4.4;
+
+subnet 10.0.0.0 netmask 255.255.255.0 {
+   option subnet-mask  255.255.255.0;
+   option routers      10.0.0.1;
+   range 10.0.0.50 10.0.0.52;
+   range 10.0.0.55 10.0.0.59;
+   default-lease-time 3600;
+   max-lease-time 7200;
+}
+
+host Livingroom_GW {
+  hardware ethernet 34:CE:00:91:F8:66;
+  fixed-address 10.0.0.110;  
+}
+-----------------------------
+SSH,  SSH uses TCP as its transport protocol. The well known TCP port for SSH traffic is 22.
+client  --> request server
+server  ---> respond client
+client  --> init key exchange (encryption_algorithms)
+server  ---> init key exchange (encryption_algorithms)
+client  --> "Diffie-Hellman" Key Exchange Init (選擇二邊都有的加密認証方式)
+server  ---> "Diffie-Hellman" Key Exchange Reply (reply client key,Msg code: New Keys (21))
+clent   --> "回最後的加密內容 SSH Version 2 (encryption:aes256-ctr mac:hmac-sha2-256 compression:none)
+
+
+
+====================
+putty  Xming 在視窗系統的遠端視窗操作
+
+
+
+pratice 
+https://dywang.csie.cyut.edu.tw/dywang/linuxProgram/node53.html
