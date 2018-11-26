@@ -45,8 +45,6 @@ sed -e 's/[1-9]/#/g' 1.txt
 從this這行開始到最後 將1-9數字改成 "?"字號
 sed -e '/this/,$ s/[1-9]/?/g' 1.txt
 
-
-多???
 sed -e '3,$d' -e 's/alf/askey/' 1.txt
 
 
